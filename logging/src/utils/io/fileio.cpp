@@ -1,31 +1,85 @@
-#include <ios>  // Copyright 2025 wiserin
+#include <exception>  // Copyright 2025 wiserin
+#include <ios>
 #include <stdexcept>
 #include <string>
 #include <fstream>
+#include <mutex>
+#include <thread>
+#include <utility>
+#include <iostream>
 
 #include <iocontroller.hpp>
+#include <utils.hpp>
 
 using str = std::string;
 
 
-FileIOController::FileIOController(str file_path) {
+FileIOController::FileIOController(const str& file_path) {
     file.open(file_path, std::ios::app);
     if (!file) {
         throw std::runtime_error("Не получилось открыть требуемый файл");
     }
+    worker = std::thread(&FileIOController::WriterRunner, this);
+
+    std::unique_lock<std::mutex> lock(mut);
+    started_cv.wait(lock, [this]{ return is_started; });
 }
 
 
-void FileIOController::WriteLine(const str& str_to_write) {
+void FileIOController::WriterStarted() {
+    std::unique_lock<std::mutex> lock(mut);
+    is_started = true;
+    started_cv.notify_one();
+}
+
+
+void FileIOController::WriterRunner() {
+    try {
+        WriterStarted();
+        while (!is_stop) {
+            std::unique_lock<std::mutex> lock(mut);
+            cv.wait(lock, [this](){ return is_stop || !log_queue.IsEmpty(); });
+
+            while (!log_queue.IsEmpty()) {
+                Write(lock);
+            }
+
+            if (is_stop && log_queue.IsEmpty()) {
+                return;
+            }
+        }
+    } catch (const std::exception& ex) {
+        std::unique_lock<std::mutex> lock(mut);
+        is_error = true;
+        error_text = std::move(ex.what());
+        return;
+    }
+}
+
+
+void FileIOController::Write(std::unique_lock<std::mutex>& lock) {
     if (!file) {
         throw std::runtime_error("Ошибка при получении доступа к файлу при записи");
     }
 
-    file << str_to_write << '\n';
+    Log log_to_write = log_queue.Pop();
+    lock.unlock();
+
+    file << log_to_write.log << '\n';
 
     if (file.fail()) {
         throw std::runtime_error("Не получилось записать строку в файл");
     }
+    lock.lock();
+}
+
+
+void FileIOController::AddLog(Log&& log) {
+    {
+        std::unique_lock<std::mutex> lock(mut);
+        log_queue.Push(std::move(log));
+    }
+    cv.notify_one();
 }
 
 
@@ -35,7 +89,17 @@ void FileIOController::TurnOfOutBuff() {
 
 
 FileIOController::~FileIOController() {
+    {
+        std::unique_lock<std::mutex> lock(mut);
+        is_stop = true;
+    }
+    cv.notify_one();
+    worker.join();
+
     if (file) {
         file.close();
+    }
+    if (is_error) {
+        std::cerr << error_text << std::endl;
     }
 }

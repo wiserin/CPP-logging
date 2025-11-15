@@ -1,0 +1,47 @@
+#include <stdexcept>  // Copyright 2025 wiserin
+#include <string>
+#include <memory>
+#include <utility>
+
+#include <logging/logger.hpp>
+#include <logging/schemas.hpp>
+#include <iocontroller.hpp>
+
+
+using str = std::string;
+
+LoggerMode Logger::mode;
+std::unique_ptr<IOController> Logger::controller = nullptr;
+
+
+void Logger::SetupLogger(const str& file_path, LoggerMode input_mode) {
+    controller = std::make_unique<FileIOController>(file_path);
+    mode = input_mode;
+}
+
+
+void Logger::SetupLogger(LoggerMode input_mode) {
+    controller = std::make_unique<StdIOController>();
+    mode = input_mode;
+}
+
+
+Logger::Logger(str&& name) {
+    if (controller == nullptr) {
+        throw std::runtime_error("Необходима инициализация логгера");
+    }
+    logger_name = std::move(name);
+    logger_name = logger_name + " ";
+}
+
+
+
+void Logger::Info(str&& log) {
+    str local_log = std::move(log);
+
+    str temp = info_badge + logger_name + local_log;
+
+    Log new_log {std::move(temp), Proirity::kHigh};
+
+    controller->AddLog(std::move(new_log));
+}
