@@ -10,18 +10,32 @@
 
 using str = std::string;
 
+
+namespace logging {
+
 LoggerMode Logger::mode;
 std::unique_ptr<IOController> Logger::controller = nullptr;
 
 
-void Logger::SetupLogger(const str& file_path, LoggerMode input_mode) {
-    controller = std::make_unique<FileIOController>(file_path);
+void Logger::SetupLogger(
+        const str& file_path,
+        LoggerMode input_mode,
+        LoggerIOMode io_mode) {
+    if (io_mode == LoggerIOMode::kAsync) {
+        controller = std::make_unique<AsyncFileIOController>(file_path);
+    } else {
+        controller = std::make_unique<SyncFileIOController>(file_path);
+    }
     mode = input_mode;
 }
 
 
-void Logger::SetupLogger(LoggerMode input_mode) {
-    controller = std::make_unique<StdIOController>();
+void Logger::SetupLogger(LoggerMode input_mode, LoggerIOMode io_mode) {
+    if (io_mode == LoggerIOMode::kAsync) {
+        controller = std::make_unique<AsyncStdIOController>();
+    } else {
+        controller = std::make_unique<SyncStdIOController>();
+    }
     mode = input_mode;
 }
 
@@ -45,3 +59,5 @@ void Logger::Info(str&& log) {
 
     controller->AddLog(std::move(new_log));
 }
+
+}  // namespace logging

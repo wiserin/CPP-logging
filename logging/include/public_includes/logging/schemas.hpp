@@ -3,6 +3,8 @@
 #include <utility>
 
 
+namespace logging {
+
 enum class LoggerMode {
     kDebug = 0,
     kTesting,
@@ -18,6 +20,12 @@ enum class Proirity {
 };
 
 
+enum class LoggerIOMode {
+    kAsync = 0,
+    kSync
+};
+
+
 struct Log {
     Proirity priority;
     std::string log;
@@ -29,3 +37,5 @@ struct Log {
     Log(Log&& log) = default;
     Log& operator=(Log&& log) = default;
 };
+
+}  // namespace logging

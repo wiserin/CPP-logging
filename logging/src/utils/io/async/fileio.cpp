@@ -14,26 +14,26 @@
 using str = std::string;
 
 
-FileIOController::FileIOController(const str& file_path) {
+AsyncFileIOController::AsyncFileIOController(const str& file_path) {
     file.open(file_path, std::ios::app);
     if (!file) {
         throw std::runtime_error("Не получилось открыть требуемый файл");
     }
-    worker = std::thread(&FileIOController::WriterRunner, this);
+    worker = std::thread(&AsyncFileIOController::WriterRunner, this);
 
     std::unique_lock<std::mutex> lock(mut);
     started_cv.wait(lock, [this]{ return is_started; });
 }
 
 
-void FileIOController::WriterStarted() {
+void AsyncFileIOController::WriterStarted() {
     std::unique_lock<std::mutex> lock(mut);
     is_started = true;
     started_cv.notify_one();
 }
 
 
-void FileIOController::WriterRunner() {
+void AsyncFileIOController::WriterRunner() {
     try {
         WriterStarted();
         while (!is_stop) {
@@ -57,12 +57,12 @@ void FileIOController::WriterRunner() {
 }
 
 
-void FileIOController::Write(std::unique_lock<std::mutex>& lock) {
+void AsyncFileIOController::Write(std::unique_lock<std::mutex>& lock) {
     if (!file) {
         throw std::runtime_error("Ошибка при получении доступа к файлу при записи");
     }
 
-    Log log_to_write = log_queue.Pop();
+    logging::Log log_to_write = log_queue.Pop();
     lock.unlock();
 
     file << log_to_write.log << '\n';
@@ -74,21 +74,19 @@ void FileIOController::Write(std::unique_lock<std::mutex>& lock) {
 }
 
 
-void FileIOController::AddLog(Log&& log) {
-    {
-        std::unique_lock<std::mutex> lock(mut);
-        log_queue.Push(std::move(log));
-    }
+void AsyncFileIOController::AddLog(logging::Log&& log) {
+    std::unique_lock<std::mutex> lock(mut);
+    log_queue.Push(std::move(log));
     cv.notify_one();
 }
 
 
-void FileIOController::TurnOfOutBuff() {
+void AsyncFileIOController::TurnOfOutBuff() {
     file.rdbuf()->pubsetbuf(0, 0);
 }
 
 
-FileIOController::~FileIOController() {
+AsyncFileIOController::~AsyncFileIOController() {
     {
         std::unique_lock<std::mutex> lock(mut);
         is_stop = true;

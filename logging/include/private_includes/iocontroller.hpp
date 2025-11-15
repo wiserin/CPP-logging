@@ -13,7 +13,7 @@ using str = std::string;
 
 class IOController {
  public:
-    virtual void AddLog(Log&& log) = 0;
+    virtual void AddLog(logging::Log&& log) = 0;
 
     virtual void TurnOfOutBuff() = 0;
 
@@ -21,14 +21,14 @@ class IOController {
 };
 
 
-class FileIOController : public IOController {
+class AsyncFileIOController : public IOController {
     std::mutex mut;
     std::condition_variable cv;
     std::condition_variable started_cv;
     std::thread worker;
 
     std::ofstream file;
-    WorkerQueue<Log, LogComparator> log_queue;
+    WorkerQueue<logging::Log, LogComparator> log_queue;
 
     bool is_stop = false;
     bool is_started = false;
@@ -41,34 +41,66 @@ class FileIOController : public IOController {
     void Write(std::unique_lock<std::mutex>& lock);
 
  public:
-    explicit FileIOController(const str& file_path);
+    explicit AsyncFileIOController(const str& file_path);
 
-    void AddLog(Log&& log) override;
+    void AddLog(logging::Log&& log) override;
 
     void TurnOfOutBuff() override;
 
-    ~FileIOController();
+    ~AsyncFileIOController();
 };
 
 
-class StdIOController : public IOController {
+class AsyncStdIOController : public IOController {
     std::condition_variable cv;
+    std::condition_variable started_cv;
     std::mutex mut;
     std::thread worker;
 
-    WorkerQueue<Log, LogComparator> log_queue;
+    WorkerQueue<logging::Log, LogComparator> log_queue;
 
     bool is_stop = false;
+    bool is_started = false;
+    bool is_error = false;
+
+    str error_text;
 
     void WriterRunner();
+    void WriterStarted();
     void Write(std::unique_lock<std::mutex>& lock);
 
  public:
-    StdIOController();
+    AsyncStdIOController();
 
-    void AddLog(Log&& log) override;
+    void AddLog(logging::Log&& log) override;
 
     void TurnOfOutBuff() override;
 
-    ~StdIOController();
+    ~AsyncStdIOController();
+};
+
+
+class SyncFileIOController : public IOController {
+    std::ofstream file;
+
+ public:
+    explicit SyncFileIOController(const str& file_path);
+
+    void AddLog(logging::Log&& log) override;
+
+    void TurnOfOutBuff() override;
+
+    ~SyncFileIOController();
+};
+
+
+class SyncStdIOController : public IOController {
+ public:
+    explicit SyncStdIOController() = default;
+
+    void AddLog(logging::Log&& log) override;
+
+    void TurnOfOutBuff() override;
+
+    ~SyncStdIOController() = default;
 };

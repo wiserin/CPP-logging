@@ -6,7 +6,7 @@
 
 
 struct LogComparator {
-    bool operator()(const Log& a, const Log& b) const;
+    bool operator()(const logging::Log& a, const logging::Log& b) const;
 };
 
 

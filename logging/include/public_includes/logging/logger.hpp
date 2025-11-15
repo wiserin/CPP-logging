@@ -8,6 +8,7 @@
 
 using str = std::string;
 
+namespace logging {
 
 class Logger {
     static LoggerMode mode;
@@ -18,11 +19,18 @@ class Logger {
     const str info_badge = "[INFO] ";
 
  public:
-    static void SetupLogger(const str& file_path, LoggerMode mode);
+    static void SetupLogger(
+        const str& file_path,
+        LoggerMode mode,
+        LoggerIOMode io_mode = LoggerIOMode::kSync);
 
-    static void SetupLogger(LoggerMode mode);
+    static void SetupLogger(
+        LoggerMode mode,
+        LoggerIOMode io_mode = LoggerIOMode::kSync);
 
     explicit Logger(str&& name);
 
     void Info(str&& log);
 };
+
+}  // namespace logging
