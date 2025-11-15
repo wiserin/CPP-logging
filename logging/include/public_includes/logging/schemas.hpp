@@ -3,16 +3,38 @@
 #include <utility>
 
 
+using str = std::string;
+
+
 namespace logging {
+
+
+struct Badges {
+    inline static const char* red     = "\033[31m";
+    inline static const char* green   = "\033[32m";
+    inline static const char* yellow  = "\033[33m";
+    inline static const char* blue    = "\033[34m";
+    inline static const char* reset   = "\033[0m";
+
+    inline static const std::string kDebug     = std::string(blue)    + "[DEBUG]    " + reset;
+    inline static const std::string kInfo      = std::string(green)   + "[INFO]     " + reset;
+    inline static const std::string kWarning   = std::string(yellow)  + "[WARNING]  " + reset;
+    inline static const std::string kException = std::string(red)     + "[EXCEPTION]" + reset;
+    inline static const std::string kError     = std::string(red)     + "[ERROR]    " + reset;
+    inline static const std::string kCritical  = std::string(red)     + "[CRITICAL] " + reset;
+};
 
 enum class LoggerMode {
     kDebug = 0,
-    kTesting,
-    kProduction
+    kInfo,
+    kWarning,
+    kException,
+    kError,
+    kCritical
 };
 
 
-enum class Proirity {
+enum class Priority {
     kMax = 0,
     kHigh,
     kNormal,
@@ -27,10 +49,10 @@ enum class LoggerIOMode {
 
 
 struct Log {
-    Proirity priority;
-    std::string log;
+    Priority priority;
+    str log;
 
-    Log(std::string&& log_text, Proirity priority)
+    Log(str&& log_text, Priority priority)
             : log(std::move(log_text))
             , priority(priority) {}
 

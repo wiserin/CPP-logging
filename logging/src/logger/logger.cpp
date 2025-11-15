@@ -48,16 +48,4 @@ Logger::Logger(str&& name) {
     logger_name = logger_name + " ";
 }
 
-
-
-void Logger::Info(str&& log) {
-    str local_log = std::move(log);
-
-    str temp = info_badge + logger_name + local_log;
-
-    Log new_log {std::move(temp), Proirity::kHigh};
-
-    controller->AddLog(std::move(new_log));
-}
-
 }  // namespace logging

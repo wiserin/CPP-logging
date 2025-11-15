@@ -16,21 +16,28 @@ class Logger {
 
     str logger_name;
 
-    const str info_badge = "[INFO] ";
+    bool CheckLevel(LoggerMode log_mode);
+
+    Log BuildLog(const str& log, const str& badge, Priority proirity);
 
  public:
     static void SetupLogger(
         const str& file_path,
-        LoggerMode mode,
+        LoggerMode logging_level,
         LoggerIOMode io_mode = LoggerIOMode::kSync);
 
     static void SetupLogger(
-        LoggerMode mode,
+        LoggerMode logging_level,
         LoggerIOMode io_mode = LoggerIOMode::kSync);
 
     explicit Logger(str&& name);
 
+    void Debug(str&& log);
     void Info(str&& log);
+    void Warning(str&& log);
+    void Exception(str&& log);
+    void Error(str&& log);
+    void Critical(str&& log);
 };
 
 }  // namespace logging
