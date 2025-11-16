@@ -9,7 +9,7 @@ using str = std::string;
 namespace logging {
 
 
-struct Badges {
+struct ColoredBadges {
     inline static const char* red     = "\033[31m";
     inline static const char* green   = "\033[32m";
     inline static const char* yellow  = "\033[33m";
@@ -23,6 +23,17 @@ struct Badges {
     inline static const std::string kError     = std::string(red)     + "[ERROR]    " + reset;
     inline static const std::string kCritical  = std::string(red)     + "[CRITICAL] " + reset;
 };
+
+
+struct Badges {
+    inline static const std::string kDebug     = "[DEBUG]    ";
+    inline static const std::string kInfo      = "[INFO]     ";
+    inline static const std::string kWarning   = "[WARNING]  ";
+    inline static const std::string kException = "[EXCEPTION]";
+    inline static const std::string kError     = "[ERROR]    ";
+    inline static const std::string kCritical  = "[CRITICAL] ";
+};
+
 
 enum class LoggerMode {
     kDebug = 0,

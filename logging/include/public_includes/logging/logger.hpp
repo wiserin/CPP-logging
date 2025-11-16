@@ -13,22 +13,25 @@ namespace logging {
 class Logger {
     static LoggerMode mode;
     static std::unique_ptr<IOController> controller;
+    static bool colored;
 
     str logger_name;
-
     bool CheckLevel(LoggerMode log_mode);
+    Log BuildLog(const str& log, LoggerMode mode, Priority proirity);
 
-    Log BuildLog(const str& log, const str& badge, Priority proirity);
+    const str& GetBadge(LoggerMode log_mode);
 
  public:
     static void SetupLogger(
         const str& file_path,
         LoggerMode logging_level,
-        LoggerIOMode io_mode = LoggerIOMode::kSync);
+        LoggerIOMode io_mode = LoggerIOMode::kSync,
+        bool colored = false);
 
     static void SetupLogger(
         LoggerMode logging_level,
-        LoggerIOMode io_mode = LoggerIOMode::kSync);
+        LoggerIOMode io_mode = LoggerIOMode::kSync,
+        bool colored = false);
 
     explicit Logger(str&& name);
 

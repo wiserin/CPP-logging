@@ -11,8 +11,8 @@ using str = std::string;
 
 namespace logging {
 
-Log Logger::BuildLog(const str& log, const str& badge, Priority priority) {
-    str data = badge + ' ' + logger_name + ' ' + log;
+Log Logger::BuildLog(const str& log, LoggerMode badge, Priority priority) {
+    str data = GetBadge(badge) + ' ' + logger_name + ' ' + log;
     Log compl_log {std::move(data), priority};
     return compl_log;
 }
@@ -22,6 +22,59 @@ bool Logger::CheckLevel(LoggerMode log_mode) {
         return true;
     } else {
         return false;
+    }
+}
+
+const str& Logger::GetBadge(LoggerMode log_mode) {
+    switch (log_mode) {
+        case logging::LoggerMode::kDebug : {
+            if (colored) {
+                return ColoredBadges::kDebug;
+            } else {
+                return Badges::kDebug;
+            }
+            break;
+        }
+        case logging::LoggerMode::kInfo : {
+            if (colored) {
+                return ColoredBadges::kInfo;
+            } else {
+                return Badges::kInfo;
+            }
+            break;
+        }
+        case logging::LoggerMode::kWarning : {
+            if (colored) {
+                return ColoredBadges::kWarning;
+            } else {
+                return Badges::kWarning;
+            }
+            break;
+        }
+        case logging::LoggerMode::kException : {
+            if (colored) {
+                return ColoredBadges::kException;
+            } else {
+                return Badges::kException;
+            }
+            break;
+        }
+        case logging::LoggerMode::kError : {
+            if (colored) {
+                return ColoredBadges::kError;
+            } else {
+                return Badges::kError;
+            }
+            break;
+        }
+        case logging::LoggerMode::kCritical : {
+            if (colored) {
+                return ColoredBadges::kCritical;
+            } else {
+                return Badges::kCritical;
+            }
+            break;
+        }
     }
 }
 
