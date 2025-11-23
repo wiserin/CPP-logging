@@ -55,6 +55,10 @@ Logger::Logger(str&& name) {
     logger_name = logger_name + " ";
 }
 
+Logger::Logger(Logger&& logger) {
+    logger_name = std::move(logger.logger_name);
+}
+
 void Logger::DisableBuff() {
     controller->TurnOfOutBuff();
 }

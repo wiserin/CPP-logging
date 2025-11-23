@@ -16,6 +16,7 @@ class Logger {
     static bool colored;
 
     str logger_name;
+
     bool CheckLevel(LoggerMode log_mode);
     Log BuildLog(const str& log, LoggerMode mode, Priority proirity);
 
@@ -33,7 +34,10 @@ class Logger {
         LoggerIOMode io_mode = LoggerIOMode::kSync,
         bool colored = false);
 
+    Logger() = default;
+    Logger(Logger&& logger);
     explicit Logger(str&& name);
+
     void DisableBuff();
 
     void Debug(str&& log);
