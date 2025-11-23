@@ -55,4 +55,8 @@ Logger::Logger(str&& name) {
     logger_name = logger_name + " ";
 }
 
+void Logger::DisableBuff() {
+    controller->TurnOfOutBuff();
+}
+
 }  // namespace logging

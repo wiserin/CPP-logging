@@ -34,6 +34,7 @@ class Logger {
         bool colored = false);
 
     explicit Logger(str&& name);
+    void DisableBuff();
 
     void Debug(str&& log);
     void Info(str&& log);
