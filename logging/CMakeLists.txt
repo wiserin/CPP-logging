@@ -1,8 +1,9 @@
-add_library(logging STATIC)
+add_library(WiseLogging SHARED)
 
 target_include_directories(
-    logging PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include/public_includes)
+    WiseLogging PUBLIC 
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/public_includes)
 target_include_directories(
-    logging PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include/private_includes)
+    WiseLogging PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include/private_includes)
 
 add_subdirectory(src)
