@@ -3,6 +3,6 @@
 
 
 bool LogComparator::operator()(const logging::Log& a, const logging::Log& b) const {
-    return static_cast<int>(a.priority) < static_cast<int>(b.priority);
+    return static_cast<int>(a.priority) > static_cast<int>(b.priority);
 }
 

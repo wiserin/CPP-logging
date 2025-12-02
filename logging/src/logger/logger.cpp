@@ -55,4 +55,17 @@ Logger::Logger(str&& name) {
     logger_name = logger_name + " ";
 }
 
+Logger::Logger(Logger&& logger) {
+    logger_name = std::move(logger.logger_name);
+}
+
+Logger& Logger::operator=(Logger&& logger) {
+    logger_name = std::move(logger.logger_name);
+    return *this;
+}
+
+void Logger::DisableBuff() {
+    controller->TurnOfOutBuff();
+}
+
 }  // namespace logging

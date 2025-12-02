@@ -1,6 +1,7 @@
 #pragma once  // Copyright 2025 wiserin
 #include <vector>
 #include <utility>
+#include <algorithm>
 
 #include <logging/schemas.hpp>
 
