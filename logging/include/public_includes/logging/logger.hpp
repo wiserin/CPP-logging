@@ -36,6 +36,7 @@ class Logger {
 
     Logger() = default;
     Logger(Logger&& logger);
+    Logger& operator=(Logger&& logger);
     explicit Logger(str&& name);
 
     void DisableBuff();
