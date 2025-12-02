@@ -3,4 +3,4 @@ set(ASYNC_IO_SRC_FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/stdio.cpp)
 
 
-target_sources(logging PRIVATE ${ASYNC_IO_SRC_FILES})
+target_sources(WiseLogging PRIVATE ${ASYNC_IO_SRC_FILES})

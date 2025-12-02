@@ -3,4 +3,4 @@ set(UTILS_SRC_FILES
 
 add_subdirectory(io)
 
-target_sources(logging PRIVATE ${UTILS_SRC_FILES})
+target_sources(WiseLogging PRIVATE ${UTILS_SRC_FILES})

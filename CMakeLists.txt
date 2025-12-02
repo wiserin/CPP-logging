@@ -3,7 +3,7 @@
 cmake_minimum_required(VERSION 3.12)
 
 project(
-    test
+    WiseLogging
     VERSION 1.0
     DESCRIPTION "Simple logger"
     LANGUAGES CXX
