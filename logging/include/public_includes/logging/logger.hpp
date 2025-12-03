@@ -17,10 +17,10 @@ class Logger {
 
     str logger_name;
 
-    bool CheckLevel(LoggerMode log_mode);
-    Log BuildLog(const str& log, LoggerMode mode, Priority proirity);
+    bool CheckLevel(LoggerMode log_mode) const;
+    Log BuildLog(const str& log, LoggerMode mode, Priority proirity) const;
 
-    const str& GetBadge(LoggerMode log_mode);
+    const str& GetBadge(LoggerMode log_mode) const;
 
  public:
     static void SetupLogger(
@@ -41,12 +41,12 @@ class Logger {
 
     void DisableBuff();
 
-    void Debug(str&& log);
-    void Info(str&& log);
-    void Warning(str&& log);
-    void Exception(str&& log);
-    void Error(str&& log);
-    void Critical(str&& log);
+    void Debug(str&& log) const;
+    void Info(str&& log) const;
+    void Warning(str&& log) const;
+    void Exception(str&& log) const;
+    void Error(str&& log) const;
+    void Critical(str&& log) const;
 };
 
 }  // namespace logging

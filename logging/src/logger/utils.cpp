@@ -11,13 +11,13 @@ using str = std::string;
 
 namespace logging {
 
-Log Logger::BuildLog(const str& log, LoggerMode badge, Priority priority) {
+Log Logger::BuildLog(const str& log, LoggerMode badge, Priority priority) const {
     str data = GetBadge(badge) + ' ' + logger_name + ' ' + log;
     Log compl_log {std::move(data), priority};
     return compl_log;
 }
 
-bool Logger::CheckLevel(LoggerMode log_mode) {
+bool Logger::CheckLevel(LoggerMode log_mode) const {
     if (static_cast<int>(log_mode) >= static_cast<int>(mode)) {
         return true;
     } else {
@@ -25,7 +25,7 @@ bool Logger::CheckLevel(LoggerMode log_mode) {
     }
 }
 
-const str& Logger::GetBadge(LoggerMode log_mode) {
+const str& Logger::GetBadge(LoggerMode log_mode) const {
     switch (log_mode) {
         case logging::LoggerMode::kDebug : {
             if (colored) {
